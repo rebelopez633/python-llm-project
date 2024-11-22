@@ -5,12 +5,14 @@ from graph_state import GraphState
 
 from edges_lang_chain_impl import EdgesLangChainImpl
 from nodes_lang_chain_impl import NodesLangChainImpl
+from web_search_tavily_impl import WebSearchTavilyImpl
 import logging
 
 class Controlflow:
     def __init__(self, local_llm, retriever):
         self.edges = EdgesLangChainImpl(local_llm, retriever)
         self.nodes = NodesLangChainImpl(local_llm, retriever)
+        self.web_search = WebSearchTavilyImpl()
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
 
@@ -19,7 +21,7 @@ class Controlflow:
         workflow = StateGraph(GraphState)
 
         self.logger.info("Building graph...")
-        workflow.add_node("websearch", self.nodes.web_search)  # web search
+        workflow.add_node("websearch", self.web_search.web_search)  # web search
         workflow.add_node("retrieve", self.nodes.retrieve)
         workflow.add_node("grade_documents", self.nodes.grade_documents)
         workflow.add_node("generate", self.nodes.generate)
