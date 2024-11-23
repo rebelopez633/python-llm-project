@@ -5,7 +5,13 @@ from text_splitter_lang_chain_impl import TextSplitterLangChainImpl
 from vector_store_lang_chain_impl import VectorStoreLangChainImpl
 from control_flow import Controlflow
 
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d'
+)
+
+# Set logging level for specific libraries to WARNING or ERROR
+logging.getLogger("requests").setLevel(logging.WARNING)
 
 os.environ["TAVILY_API_KEY"] = "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"
 os.environ["TOKENIZERS_PARALLELISM"] = "true"

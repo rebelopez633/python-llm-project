@@ -2,9 +2,6 @@ import logging
 from langchain_community.document_loaders import PyPDFLoader, WebBaseLoader
 from load_document_interface import LoadDocumentInterface
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 class LoadDocumentLangChainImpl(LoadDocumentInterface):
 
     @staticmethod

@@ -2,9 +2,6 @@ import logging
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from text_splitter_interface import TextSplitterInterface
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 class TextSplitterLangChainImpl(TextSplitterInterface):
 
     @staticmethod

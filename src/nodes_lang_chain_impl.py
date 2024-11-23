@@ -2,12 +2,9 @@ import json
 import logging
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_ollama import ChatOllama
-from langchain.schema import Document
 from langchain_community.tools.tavily_search import TavilySearchResults
 from nodes_interface import NodesInterface
 from graph_state import GraphState
-
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class NodesLangChainImpl(NodesInterface):
     def __init__(self, local_llm, retriever):
@@ -148,25 +145,3 @@ class NodesLangChainImpl(NodesInterface):
         rag_prompt_formatted = rag_prompt.format(context=docs_txt, question=question)
         generation = self.llm.invoke([HumanMessage(content=rag_prompt_formatted)])
         return {"generation": generation, "loop_step": loop_step + 1}
-    
-    def web_search(self, state: GraphState) -> dict:
-        """
-        Web search based based on the question
-
-        Args:
-            state (dict): The current graph state
-
-        Returns:
-            state (dict): Appended web results to documents
-        """
-
-        logging.info("---WEB SEARCH---")
-        question = state["question"]
-        documents = state.get("documents", [])
-
-        # Web search
-        docs = self.web_search_tool.invoke({"query": question})
-        web_results = "\n".join([d["content"] for d in docs])
-        web_results = Document(page_content=web_results)
-        documents.append(web_results)
-        return {"documents": documents}

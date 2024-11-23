@@ -3,8 +3,6 @@ from langchain_community.vectorstores import SKLearnVectorStore
 from langchain_nomic.embeddings import NomicEmbeddings
 from vector_store_interface import VectorStoreInterface
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class VectorStoreLangChainImpl(VectorStoreInterface):
     @staticmethod

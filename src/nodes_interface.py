@@ -33,10 +33,3 @@ class NodesInterface(ABC):
         Generate an answer to the query
         """
         pass
-    
-    @abstractmethod
-    def web_search(self, state: GraphState) -> dict:
-        """
-        Perform a web search
-        """
-        pass

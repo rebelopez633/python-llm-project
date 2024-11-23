@@ -9,9 +9,6 @@ from langchain_community.vectorstores import SKLearnVectorStore
 from edges_interface import EdgesInterface
 from graph_state import GraphState
 
-# Configure logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
 class EdgesLangChainImpl(EdgesInterface):
     def __init__(self, local_llm, retriever):
         self.llm = ChatOllama(model=local_llm, temperature=0)
