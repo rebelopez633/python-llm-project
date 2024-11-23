@@ -1,7 +1,5 @@
 import os
 import logging
-from langgraph.graph import StateGraph
-from graph_state import GraphState
 from load_document_lang_chain_impl import LoadDocumentLangChainImpl
 from text_splitter_lang_chain_impl import TextSplitterLangChainImpl
 from vector_store_lang_chain_impl import VectorStoreLangChainImpl
@@ -37,4 +35,6 @@ logging.debug("Initializing Controlflow.")
 flow_controller = Controlflow(local_llm, retriever)
 logging.debug("Controlflow initialized.")
 
-Controlflow.build_graph(flow_controller)
+inputs = {"question": "What are the types of agent memory?", "max_retries": 3}
+
+flow_controller.stream_events(flow_controller.graph, inputs)

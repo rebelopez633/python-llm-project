@@ -8,7 +8,7 @@ class WebSearchTavilyImpl(WebSearchInterface):
     def __init__(self):
         self.web_search_tool = TavilySearchResults(k=3)
 
-def web_search(self, state: GraphState) -> dict:
+    def web_search(self, state: GraphState) -> dict:
         """
         Web search based based on the question
 

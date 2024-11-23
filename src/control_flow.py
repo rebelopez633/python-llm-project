@@ -15,18 +15,24 @@ class Controlflow:
         self.web_search = WebSearchTavilyImpl()
         logging.basicConfig(level=logging.INFO)
         self.logger = logging.getLogger(__name__)
+        self.graph = self._build_graph()
 
-    def build_graph(self):
+    def _build_graph(self):
+        workflow = self._initialize_workflow()
+        self._set_conditional_entry_point(workflow)
+        self._add_edges(workflow)
+        return self._compile_and_display_graph(workflow)
 
+    def _initialize_workflow(self):
         workflow = StateGraph(GraphState)
-
         self.logger.info("Building graph...")
-        workflow.add_node("websearch", self.web_search.web_search)  # web search
+        workflow.add_node("websearch", self.web_search.web_search)
         workflow.add_node("retrieve", self.nodes.retrieve)
         workflow.add_node("grade_documents", self.nodes.grade_documents)
         workflow.add_node("generate", self.nodes.generate)
+        return workflow
 
-        # Build graph
+    def _set_conditional_entry_point(self, workflow):
         self.logger.info("Setting conditional entry point...")
         workflow.set_conditional_entry_point(
             self.edges.route_question,
@@ -35,6 +41,8 @@ class Controlflow:
                 "vectorstore": "retrieve",
             },
         )
+
+    def _add_edges(self, workflow):
         self.logger.info("Adding edges...")
         workflow.add_edge("websearch", "generate")
         workflow.add_edge("retrieve", "grade_documents")
@@ -57,21 +65,13 @@ class Controlflow:
             },
         )
 
-        # Compile
+    def _compile_and_display_graph(self, workflow):
         self.logger.info("Compiling graph...")
         graph = workflow.compile()
         display(Image(graph.get_graph().draw_mermaid_png()))
+        return graph
 
-        inputs = {"question": "What are the types of agent memory?", "max_retries": 3}
-        self.logger.info("Streaming events for inputs: %s", inputs)
-        for event in graph.stream(inputs, stream_mode="values"):
-            self.logger.info("Event: %s", event)
-            
-        # Test on current events
-        inputs = {
-            "question": "What are the models released today for llama3.2?",
-            "max_retries": 3,
-        }
+    def stream_events(self, graph, inputs):
         self.logger.info("Streaming events for inputs: %s", inputs)
         for event in graph.stream(inputs, stream_mode="values"):
             self.logger.info("Event: %s", event)
