@@ -1,12 +1,11 @@
 import os
 import logging
-from load_document_lang_chain_impl import LoadDocumentLangChainImpl
-from text_splitter_lang_chain_impl import TextSplitterLangChainImpl
+from langchain_ollama import OllamaEmbeddings
 from vector_store_lang_chain_impl import VectorStoreLangChainImpl
 from control_flow import Controlflow
 
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s - %(filename)s:%(lineno)d'
 )
 
@@ -21,6 +20,8 @@ os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "local-llama32-rag"
 
 local_llm = "llama3.2:3b-instruct-fp16"
+vector_store_name = "thermo_texts"
+vector_store_lang_chain_impl = VectorStoreLangChainImpl(OllamaEmbeddings(model=local_llm), vector_store_name)
 
 pdf_paths = [
     r"C:\Users\rebel\Documents\textbooks\61-the_principles_of_chemical_equil.pdf",
@@ -31,16 +32,19 @@ urls = [
     "https://www.feynmanlectures.caltech.edu/I_44.html"
 ]
 
-docs_list = LoadDocumentLangChainImpl.load_web(urls)
-docs_list += LoadDocumentLangChainImpl.load_pdf(pdf_paths)
-doc_splits = TextSplitterLangChainImpl.split_text(docs_list)
 
-vector_store = VectorStoreLangChainImpl.store_vector(doc_splits)
-retriever = vector_store.as_retriever(k=3)
+
+vector_store = None
+retriever = None
+if os.path.exists(f"C:/Users/rebel/Documents/Python/python-llm-project/{vector_store_name}.parquet"):
+    vector_store, retriever = vector_store_lang_chain_impl.load_vector_store()
+
+if vector_store is None:
+    vector_store, retriever = vector_store_lang_chain_impl.create_vector_store(pdf_paths, urls)
 
 flow_controller = Controlflow(local_llm, retriever)
 
-question = "What is entropy?"
+question = "What is a reversible process?"
 
 response = flow_controller.ask_question(flow_controller.graph, question)
-print(response)
+print(response.content)
