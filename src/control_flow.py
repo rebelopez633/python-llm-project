@@ -69,8 +69,22 @@ class Controlflow:
         graph = workflow.compile()
         display(Image(graph.get_graph().draw_mermaid_png()))
         return graph
+    
+    def ask_question(self, graph, question):
+        """
+        Ask a question and run the workflow
 
-    def stream_events(self, graph, inputs):
-        self.logger.debug("Streaming events for inputs: %s", inputs)
-        for event in graph.stream(inputs, stream_mode="values"):
-            self.logger.debug("Event: %s", event)
+        Args:
+            question (str): The question to ask
+
+        Returns:
+            str: The answer to the question
+        """
+
+        for event in graph.stream({"question": question, "max_retries": 3}, stream_mode="values"):
+            logging.debug(event)
+            # print(event.keys())
+            if event.get("generation"):
+                result_string = event.get("generation", {})
+        return result_string        
+        
