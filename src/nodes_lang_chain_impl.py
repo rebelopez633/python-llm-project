@@ -1,15 +1,15 @@
 import json
 import logging
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
 from langchain_community.tools.tavily_search import TavilySearchResults
 from nodes_interface import NodesInterface
 from graph_state import GraphState
+from llm_factory import create_llm
 
 class NodesLangChainImpl(NodesInterface):
     def __init__(self, local_llm, retriever):
-        self.llm = ChatOllama(model=local_llm, temperature=0)
-        self.llm_json_mode = ChatOllama(model=local_llm, temperature=0, format="json")
+        self.llm = create_llm(local_llm)
+        self.llm_json_mode = create_llm(local_llm, format="json")
         self.retriever = retriever
         self.web_search_tool = TavilySearchResults(k=3)
 

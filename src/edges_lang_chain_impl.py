@@ -1,18 +1,14 @@
 import json
-import operator
 import logging
-from typing import Annotated, List
-from typing_extensions import TypedDict
+from llm_factory import create_llm
 from langchain_core.messages import HumanMessage, SystemMessage
-from langchain_ollama import ChatOllama
-from langchain_community.vectorstores import SKLearnVectorStore
 from edges_interface import EdgesInterface
 from graph_state import GraphState
 
 class EdgesLangChainImpl(EdgesInterface):
     def __init__(self, local_llm, retriever):
-        self.llm = ChatOllama(model=local_llm, temperature=0)
-        self.llm_json_mode = ChatOllama(model=local_llm, temperature=0, format="json")
+        self.llm = create_llm(local_llm)
+        self.llm_json_mode = create_llm(local_llm, format="json")
         self.retriever = retriever
 
     def format_docs(self, docs):
@@ -29,8 +25,8 @@ class EdgesLangChainImpl(EdgesInterface):
             str: Next node to call
         """
         router_instructions = """You are an expert at routing a user question to a vectorstore or web search.
-        The vectorstore contains documents related to agents, prompt engineering, and adversarial attacks.
-        Use the vectorstore for questions on these topics. For all else, and especially for current events, use web-search.
+        The vectorstore contains documents related to thermodynamics.
+        Use the vectorstore for questions on this topic. For all else, and especially for current events, use web-search.
         Return JSON with single key, datasource, that is 'websearch' or 'vectorstore' depending on the question."""
 
         logging.info("---ROUTE QUESTION---")
