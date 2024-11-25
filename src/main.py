@@ -1,3 +1,4 @@
+import streamlit as st
 import os
 import logging
 from langchain_ollama import OllamaEmbeddings
@@ -44,7 +45,11 @@ if vector_store is None:
 
 flow_controller = Controlflow(local_llm, retriever)
 
-question = "What is a reversible process?"
 
-response = flow_controller.ask_question(flow_controller.graph, question)
-print(response.content)
+# Streamlit app
+st.title("LLM Project")
+
+question = st.text_input("Enter your question:")
+if st.button("Ask"):
+    response = flow_controller.ask_question(flow_controller.graph, question)
+    st.write(response.content)
