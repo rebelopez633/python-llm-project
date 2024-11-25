@@ -34,7 +34,7 @@ class EdgesLangChainImpl(EdgesInterface):
             [SystemMessage(content=router_instructions)]
             + [HumanMessage(content=state["question"])]
         )
-        source = json.loads(route_question.content)["datasource"]
+        source = json.loads(route_question)["datasource"]
         if source == "websearch":
             logging.info("---ROUTE QUESTION TO WEB SEARCH---")
             return "websearch"
@@ -105,13 +105,13 @@ class EdgesLangChainImpl(EdgesInterface):
         max_retries = state.get("max_retries", 3)  # Default to 3 if not provided
 
         hallucination_grader_prompt_formatted = hallucination_grader_prompt.format(
-            documents=self.format_docs(documents), generation=generation.content
+            documents=self.format_docs(documents), generation=generation
         )
         result = self.llm_json_mode.invoke(
             [SystemMessage(content=hallucination_grader_instructions)]
             + [HumanMessage(content=hallucination_grader_prompt_formatted)]
         )
-        grade = json.loads(result.content)["binary_score"]
+        grade = json.loads(result)["binary_score"]
 
         answer_grader_instructions = """You are a teacher grading a quiz. 
         You will be given a QUESTION and a STUDENT ANSWER. 
@@ -136,13 +136,13 @@ class EdgesLangChainImpl(EdgesInterface):
             logging.info("---GRADE GENERATION vs QUESTION---")
             # Test using question and generation from above
             answer_grader_prompt_formatted = answer_grader_prompt.format(
-                question=question, generation=generation.content
+                question=question, generation=generation
             )
             result = self.llm_json_mode.invoke(
                 [SystemMessage(content=answer_grader_instructions)]
                 + [HumanMessage(content=answer_grader_prompt_formatted)]
             )
-            grade = json.loads(result.content)["binary_score"]
+            grade = json.loads(result)["binary_score"]
             if grade == "yes":
                 logging.info("---DECISION: GENERATION ADDRESSES QUESTION---")
                 return "useful"

@@ -20,7 +20,7 @@ os.environ["LANGCHAIN_API_KEY"] = "lsv2_pt_7c11ada8d9334e21b54e82df6730e9b9_1a14
 os.environ["LANGCHAIN_TRACING_V2"] = "true"
 os.environ["LANGCHAIN_PROJECT"] = "local-llama32-rag"
 
-local_llm = "llama3.2:3b-instruct-fp16"
+local_llm = "nous-hermes2:10.7b"
 vector_store_name = "thermo_texts"
 vector_store_lang_chain_impl = VectorStoreLangChainImpl(OllamaEmbeddings(model=local_llm), vector_store_name)
 
@@ -45,6 +45,9 @@ if vector_store is None:
 
 flow_controller = Controlflow(local_llm, retriever)
 
+# question = "What is the Gibbs free energy?"
+# response = flow_controller.ask_question(flow_controller.graph, question)
+# print(response)
 
 # Streamlit app
 st.title("LLM Project")
@@ -52,4 +55,5 @@ st.title("LLM Project")
 question = st.text_input("Enter your question:")
 if st.button("Ask"):
     response = flow_controller.ask_question(flow_controller.graph, question)
-    st.write(response.content)
+    print(response)
+    st.write(response)

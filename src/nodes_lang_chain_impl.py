@@ -96,7 +96,7 @@ class NodesLangChainImpl(NodesInterface):
                 [SystemMessage(content=doc_grader_instructions)]
                 + [HumanMessage(content=doc_grader_prompt_formatted)]
             )
-            grade = json.loads(result.content)["binary_score"]
+            grade = json.loads(result)["binary_score"]
             # Document relevant
             if grade.lower() == "yes":
                 logging.info("---GRADE: DOCUMENT RELEVANT---")
